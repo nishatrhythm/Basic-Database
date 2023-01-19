@@ -1,0 +1,184 @@
+// BEFORE INSERT
+
+
+
+DELIMITER //
+
+CREATE TRIGGER before_insert_price
+BEFORE INSERT
+ON products 
+FOR EACH ROW
+BEGIN
+ IF new.cost_price >= new.retail_price THEN
+ SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Retail price must be greater than cost price.';
+ END if;
+END //
+
+DELIMITER ;
+
+
+INSERT INTO products (product_name, cost_price, retail_price, availability)
+VALUES ('Phone', 8000.00, 2000.00,'LOCAL');
+
+
+
+DELIMITER $$
+CREATE TRIGGER before_price_ch
+BEFORE INSERT
+on products 
+FOR EACH ROW
+  BEGIN
+  	IF new.cost_price <=0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Cost price must be greater than 0'; 
+    END IF;
+  END $$
+
+DELIMITER ;
+
+
+INSERT INTO products (product_name, cost_price, retail_price, availability)
+VALUES ('Phone', -2.00, 2000.00,'LOCAL');
+
+
+
+DELIMITER $$
+CREATE TRIGGER before_price_ch2
+BEFORE INSERT
+on products 
+FOR EACH ROW
+  BEGIN
+  	IF new.cost_price <=0 THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Cost price must be greater than 0'; 
+    END IF;
+  END $$
+
+DELIMITER ;
+
+
+INSERT INTO products (product_name, cost_price, retail_price, availability)
+VALUES ('Phone', 2.00, -2000.00,'LOCAL');
+
+
+
+// BEFOR UPDATE
+
+
+
+DELIMITER $$
+CREATE TRIGGER before_update_name
+BEFORE UPDATE
+on products 
+FOR EACH ROW
+  BEGIN
+    IF new.product_name <> old.product_name THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='Cannot update the name'; 
+    END IF;
+  END $$
+
+DELIMITER ;
+
+
+UPDATE products
+SET product_name='WIRELESS BLUETOOTH MOUSE'
+WHERE product_id=1;
+
+
+
+// BEFORE DELETE
+
+
+DELIMITER $$
+create TRIGGER before_delete
+BEFORE DELETE
+ON products
+FOR EACH ROW
+	BEGIN
+    	IF old.availability='ALL' THEN
+         SIGNAL SQLSTATE '45000'
+         SET MESSAGE_TEXT='Cannot delete it is available in all store';
+        END IF ;
+    END $$
+
+DELIMITER ;
+
+
+DELETE FROM products
+WHERE product_id=1;
+
+
+
+// AFTER INSERT
+
+
+
+CREATE TABLE products_to_stores(ref_id  INT PRIMARY KEY AUTO_INCREMENT, 
+   product_id INT, store_id INT);
+
+
+
+DELIMITER $$
+create trigger product_availability
+AFTER INSERT 
+ON products
+FOR EACH ROW
+BEGIN
+ IF new.availability = 'ALL' THEN
+    INSERT INTO products_to_stores(product_id,store_id)VALUES (new.product_id, 1);
+    INSERT INTO products_to_stores(product_id,store_id)VALUES (new.product_id, 2);
+  ELSE 
+   INSERT INTO products_to_stores (product_id, store_id)VALUES (new.product_id, 2);
+ END IF ;
+END $$
+DELIMITER ;
+
+
+INSERT INTO products (product_name, cost_price, retail_price, availability) 
+VALUES ('TV', 20000.00, 35000.00,'ALL');
+
+
+
+// AFTER UPDATE
+
+
+you are going to offer a sale and change the retail price of the items over the time
+CREATE TABLE products_price_history (product_id INT PRIMARY KEY AUTO_INCREMENT,
+price_date DATETIME, retail_price DOUBLE);
+
+
+
+DELIMITER $$
+create trigger price_history
+AFTER UPDATE 
+ON products
+FOR EACH ROW
+BEGIN
+ INSERT INTO products_price_history(product_id, price_date, retail_price) VALUES(old.product_id, NOW(), new.retail_price);
+END $$
+DELIMITER ;
+
+
+
+// AFTER DELETE
+
+you are going to keep the information of the items after selling all of them
+CREATE TABLE archived_products (product_id INT PRIMARY KEY, 
+product_name VARCHAR(40), cost_price DOUBLE, retail_price DOUBLE, 
+availability VARCHAR(10));
+
+
+
+DELIMITER $$
+create trigger product_archive
+AFTER DELETE 
+ON products
+FOR EACH ROW
+BEGIN
+ INSERT INTO archived_products(product_id,product_name, cost_price, retail_price, availability) VALUES(old.product_id, old.product_name, old.cost_price, old.retail_price, old.availability);
+END $$
+DELIMITER ;
+
+
+
+DELETE FROM products WHERE product_id=3;
+
+

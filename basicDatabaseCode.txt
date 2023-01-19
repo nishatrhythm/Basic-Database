@@ -1,0 +1,526 @@
+// To start CMD DB in terminal
+
+cd c:\xampp\mysql\bin
+mysql.exe -u root
+
+C:\xampp\mysql\bin\mysql.exe -u root -p
+
+
+// To show databases
+
+show databses;
+
+
+// To create database
+
+CREATE DATABASE db_name;
+
+
+// To select database
+
+USE database_name;
+
+
+// To delete database
+
+drop database db_name;
+
+
+// CREATE TABLE
+
+CREATE TABLE table_name (
+    P_ID int,
+    LastName VARCHAR(255),
+    FirstName VARCHAR(255),
+    Address VARCHAR(255),
+    City VARCHAR(255)
+    );
+
+
+// To view table from a database
+
+show tables;
+
+
+// Show a table
+
+SELECT * FROM table_name;
+
+
+// Description of a table
+
+DESCRIBE table_name;
+
+// Query code of describe table
+
+show create table table_name;
+
+
+// Delete a table
+
+DROP TABLE table_name;
+
+
+// Adding a column or attribute in a table
+
+ALTER TABLE table_name
+ADD Email VARCHAR (255);
+
+
+// Insert values or record in a table
+
+INSERT INTO persons 
+VALUES(003, 'Mahmud', 'Nishat', 'Narinda', 'Dhaka', 'nishatrhythm@gmail.com');
+
+
+// Insert values in specific column
+
+INSERT INTO persons(P_ID, LastName, FirstName)
+VALUES(001, 'Hasan', 'Rizwan');
+
+
+// Delete a column or attribute
+
+ALTER TABLE persons
+DROP COLUMN Email;
+
+
+// Update cell value
+
+UPDATE persons
+SET P_ID = 1
+WHERE P_ID = 0;
+
+
+// Add PRIMARY KEY (can't be NULL)
+
+create table Product(
+	name char(30) Primary key,
+	category varchar(255),
+	price int Primary Key
+);
+
+OR
+
+create table Product(
+	name char(30),
+	category varchar(255),
+	price int,
+	Primary Key(name, category)
+);
+
+
+// Set primary key after table creation
+
+ALTER TABLE table_name
+MODIFY P_ID int PRIMARY KEY;
+
+OR,
+
+ALTER TABLE table_name
+ADD PRIMARY KEY(P_ID);
+
+
+// DELETE OR DROP PRIMARY KEY
+
+alter table student
+drop primary key;
+
+
+// NOT NULL Field
+
+create table notnullfield(
+	PersonID int NOT NULL,
+	FirstName varchar(100) NOT NULL,
+	LastName varchar(100) Not null,
+	Age int
+);
+
+
+// NOT NULL Field After Table Creation
+
+Alter Table notnullfield
+MODIFY Age int NOT NULL;
+
+
+// INSERT NULL Values in a table, NO ERROR
+
+insert into notnullfield(PersonID, FirstName, LastName, Age)
+Values(203, '', '', 30);
+
+
+// INSERT NULL Values in a table, ERROR!
+
+insert into notnullfield(PersonID, FirstName, LastName, Age)
+Values(203, NULL, NULL, 30);
+
+
+// UNIQUE Constraint (accept NULL values)
+
+create table uniquefield(
+	P_ID int UNIQUE,
+	LastName varchar(255) Not Null,
+	City varchar(255)
+);
+
+OR,
+
+create table uniquefield(
+	P_ID int,
+	FirstName varchar(255) Not Null,
+	LastName varchar(255) Not Null,
+	City varchar(255),
+	CONSTRAINT uc_ID UNIQUE (P_ID)
+);
+
+
+// UNIQUE Constraint after table creation
+
+alter table uniquefield
+add UNIQUE (Email);
+
+
+// CHANGE / UPDATE column name
+
+alter table student
+change column old_heading
+new_heading int NOT NULL;
+
+
+// AUTO Increment
+
+create table animals(
+	id int not null AUTO_INCREMENT,
+	name char(30) not null,
+	primary key (id)
+	);
+
+
+// Multiple value insert for same column
+
+insert into animals(name)
+values('Cat'), ('Whale');
+
+
+// Reset AUTO Increment
+
+alter table animals auto_increment = 1000;
+
+
+//SQL Check Constraints
+
+
+create table persons(
+	P_ID int not null Check(P_ID>0),
+	LastName varchar(255) not null,
+	FirstName varchar(255),
+	Address varchar(255),
+	City varchar(255)
+);
+
+
+// DEFAULT VALUE while table creation
+
+create table users(
+	userID int Not null,
+	salary decimal(18,2) Default 5000.00,
+	country varchar(255) Default 'Bangladesh',
+);
+
+
+// DEFAULT VALUE after table creation
+
+Alter table users
+Add JoinDate DATETIME DEFAULT CURRENT_TIMESTAMP();
+
+
+// DELETE or DROP a DEFAULT Value
+
+Alter Table users
+Alter country Drop Default;
+
+
+// CASECADE FOREIGN KEY
+
+create table customer(
+	CustomerID INT(11) NOT NULL PRIMARY KEY,
+	Name Varchar(30) Not Null,
+	City Varchar(30)
+);
+
+create table orders(
+	OrderID int NOT NULL PRIMARY KEY,
+	productName varchar (100) NOT NULL,
+	orderCustomerID int NOT NULL,
+	FOREIGN KEY(orderCustomerID) REFERENCES customer(CustomerID)
+	ON UPDATE CASCADE
+	ON DELETE CASCADE
+);
+
+insert into customer value(1001, 'Nishat', 'Dhaka');
+insert into customer value(1002, 'Rizwan', 'Mymensingh');
+insert into customer value(1003, 'Safwan', 'Mymensingh');
+
+insert into orders value(1, 'Mobile', 1001);
+insert into orders value(2, 'Fan', 1001);
+insert into orders value(3, 'Fan', 1002);
+insert into orders value(4, 'Light', 1002);
+
+
+// SELECT specific column from table
+
+select productName, orderCustomerID from orders;
+
+
+// SELECT specific column from table with no repetition
+
+select distinct productName from orders;
+
+
+// SELECT COMPLEX / Others
+
+SELECT * FROM Persons 
+WHERE LastName='Svendson'
+AND (FirstName='Tove' OR FirstName='Ola');
+
+select loan_number,amount from table_name
+where branch_name='Perryridge' and amount>=1000; and amount<=1400
+where branch_name='Perryridge' and amount between 1000 and 1400
+
+select loan_number, branch_name, amount from loan 
+where branch_name IN / NOT IN('Round Hill','Perryridge');
+
+
+//NOT EQUAL
+
+!=  <>
+
+
+// DELETE Row or DELETE Record from a table
+
+Delete from table_name
+where Name = 'Nishat';
+
+
+// SQL JOIN
+
+create table suppliers(
+	supplier_id int,
+	supplier_name char(255),
+	primary key(supplier_id)
+);
+
+create table orders(
+	order_id int,
+	supplier_id int,
+	order_date date,
+	primary key(order_id)
+);
+
+insert into suppliers values(10000,'IBM');
+insert into suppliers values(10001,'Hewlett Packard');
+insert into suppliers values(10002,'Microsoft');
+insert into suppliers values(10003,'NVIDIA');
+
+insert into orders values(5000,10000,now());
+insert into orders values(5001,10001,curdate());
+insert into orders values(5003,10004,'2020-05-1');
+
+
+// INNER Join
+
+SELECT *
+SELECT suppliers.supplier_id, suppliers.supplier_name, orders.order_date
+FROM suppliers
+INNER JOIN orders
+ON suppliers.supplier_id = orders.supplier_id;
+
+
+// CROSS Join
+
+SELECT suppliers.supplier_id, suppliers.supplier_name, orders.order_id, orders.order_date 
+FROM suppliers
+CROSS JOIN orders;
+
+
+// Natural Join
+
+SELECT * FROM suppliers
+NATURAL JOIN orders;
+
+
+// Left Outer Join
+
+SELECT suppliers.supplier_id, suppliers.supplier_name, orders.order_date
+FROM suppliers
+LEFT JOIN orders
+ON suppliers.supplier_id = orders.supplier_id;
+
+SELECT *
+FROM suppliers as S
+LEFT JOIN orders as O
+ON S.supplier_id = O.supplier_id;
+
+
+//Right Outer Join
+
+SELECT orders.order_id,orders.order_date, suppliers.supplier_name
+FROM suppliers
+RIGHT JOIN orders
+ON suppliers.supplier_id = orders.supplier_id;
+
+SELECT *
+FROM suppliers as S
+RIGHT JOIN orders as O
+ON S.supplier_id = O.supplier_id;
+
+
+// Full Outer Join
+
+SELECT *
+FROM suppliers as S
+LEFT JOIN orders as O
+ON S.supplier_id = O.supplier_id
+
+UNION
+
+SELECT *
+FROM suppliers as S
+RIGHT JOIN orders as O
+ON S.supplier_id = O.supplier_id;
+
+
+// Self Join
+
+select F.EmployeeID, F.LastName, S.EmployeeID, S.LastName, F.Country
+from Employee F, Employee S 
+where F.Country = S.Country and F.EmployeeID < S.EmployeeID 
+Order by F.EmployeeID, S.EmployeeID;
+
+select B.branch_name, B2.branch_name, B.branch_city
+from branch as B, branch as B2
+where B.branch_city=B2.branch_city and B.branch_name < B2.branch_name
+order by B.branch_name
+
+
+// SQL AVG() Average
+
+Select avg(orderPrice) from orders;
+select avg(assets) as AVGASSET from branch;
+select branch_city, avg(assets) as AVGASSET from branch 
+GROUP By branch_city;
+
+
+// SQL COUNT() Count
+
+SELECT COUNT(*) AS NumberOfOrders FROM Orders;
+SELECT COUNT(Customer) AS CustomerNilsen FROM Orders
+WHERE Customer='Nilsen';
+SELECT COUNT(DISTINCT Customer) AS NumberOfCustomers FROM Orders;
+
+
+// SQL MAX() and MIN() Maximum and Minimum
+
+SELECT MAX(OrderPrice) AS LargestOrderPrice FROM Orders;
+SELECT MIN(OrderPrice) AS SmallestOrderPrice FROM Orders;
+
+
+// SQL SUM() Summation
+
+SELECT SUM(OrderPrice) AS OrderTotal FROM Orders;
+
+
+// SQL GROUP BY
+
+select branch_name, avg(balance) from account
+group by branch_name;
+select branch_name, count(distinct customer_name) from depositor, account
+where depositor.account_no=account.account_no
+group by branch_name;
+
+
+// SQL HAVING
+
+SELECT Customer,SUM(OrderPrice) FROM Orders
+GROUP BY Customer
+HAVING SUM(OrderPrice)<2000;
+select student_id, avg(marks) from student_result
+group by student_id
+having avg(marks)>50;
+
+
+// SQL ORDER BY Ascending (ASC) / Descending (DESC)
+
+SELECT * FROM Persons
+ORDER BY LastName DESC;
+select * from student
+order by dept_no asc,
+student_name desc;
+
+
+// SQL TOP
+
+SELECT TOP 2 * FROM Persons;
+SELECT TOP 50 PERCENT * FROM Persons;
+SELECT * FROM loan
+ORDER BY amount DESC
+LIMIT 2, 4;
+
+
+// SQL LIKE and STRING and Wildcards
+
+SELECT * FROM Persons WHERE City LIKE 's%'; //starts with s
+SELECT * FROM Persons WHERE City LIKE '%s'; //endss with s
+SELECT * FROM Persons WHERE City LIKE or NOT LIKE '%tav%';
+SELECT * FROM Persons WHERE City LIKE 'sa%';
+SELECT * FROM Persons WHERE City LIKE 'sa%';
+SELECT * FROM Persons WHERE FirstName LIKE '_la';
+SELECT * FROM Persons WHERE LastName LIKE 'S_end_on';
+select customer_name from customer where customer_name like '_____'; //exactly FIVE characters
+
+
+// SQL IN
+
+SELECT * FROM Persons
+WHERE LastName IN ('Hansen','Pettersen');
+
+
+// SQL UNION or INTERSECT or MINUS
+
+select customer_name from depositor
+UNION or UNION ALL or INTERSECT or INTERSECT ALL or MINUS or MINUS ALL
+select customer_name from borrower;
+
+
+// SQL TRUNCATE, removes the complete data without removing its structure
+
+TRUNCATE TABLE table_name;
+
+
+// SQL View
+
+CREATE VIEW minimumPriceView AS 
+SELECT items_name FROM items 
+WHERE items_cost<10000;
+
+SHOW FULL TABLES
+WHERE table_type='VIEW';
+
+SELECT * FROM minimumPriceView;
+
+
+// SQL Index
+
+SELECT items_name from items
+WHERE items_cost=2000;
+
+EXPLAIN SELECT items_name from items
+WHERE items_cost=2000;
+
+CREATE INDEX indexCost 
+ON items (items_cost);
+
+SHOW INDEXES FROM table_name;
+
+DROP INDEX indexName 
+ON tableName;
